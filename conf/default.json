@@ -1,0 +1,16 @@
+{
+    "server": 
+    {
+        "port": 4040
+    },
+
+    "rules": {
+        "connection": {
+            "maxPerIp": 12
+        },
+        "mdata": {
+            "maxSlot": 65536,
+            "maxSlotDataSize": 1024 
+        }
+    }
+}
