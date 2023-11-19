@@ -3,6 +3,7 @@ const MClient = require("../client/mclient");
 const LogHelper = require("../loghelper");
 const MData = require('../multplayerdata/mdata');
 const GameServer = require('./gameserver');
+const conf = require('../conf/conf');
 
 class MainServer {
 	gameservers;
@@ -27,6 +28,7 @@ class MainServer {
 	onConnect(client, request) {
 		let mclient = new MClient(client, request, this);
 		this.#clients[client.connectionId] = mclient;
+		if(conf.echo) mclient.echoId();
 		mclient.sendMDataPackets(this.mdata.getFull());
 		client.onmessage = (req)=>this.onMessage(mclient, req);
 		client.on('close', ()=>this.onClose(mclient));
@@ -35,12 +37,8 @@ class MainServer {
 
 	onMessage(client, req) {
 		let data = req.data;
-		console.log(data);
+		console.log(`Incoming: client: ${client}, data: ${data.toString("hex")}`);
 		let type = data.readUint8(0);
-		let dec = "";
-		for(let i = 0; i < data.length; i++) {
-			dec += parseInt(data.readUint8(i)) + " ";
-		}
 		switch(type) {
 			case 0:
 			    this.onMapPacket(client, data)

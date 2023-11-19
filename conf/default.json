@@ -12,5 +12,6 @@
             "maxSlot": 65536,
             "maxSlotDataSize": 1024 
         }
-    }
+    },
+	"echo": true
 }
