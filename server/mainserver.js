@@ -1,9 +1,11 @@
 const WebSocket = require('ws');
+const fs = require('fs');
 const MClient = require("../client/mclient");
 const LogHelper = require("../loghelper");
 const MData = require('../multplayerdata/mdata');
 const GameServer = require('./gameserver');
 const conf = require('../conf/conf');
+const https = require('https');
 
 class MainServer {
 	gameservers;
@@ -11,7 +13,17 @@ class MainServer {
 	#host;
 	mdata;
 	constructor (hostArgs) {
-		this.#host = new WebSocket.Server(hostArgs);
+		if(hostArgs.https) 
+		{
+			const cert = fs.readFileSync(hostArgs.https.certpath);
+			const key = fs.readFileSync(hostArgs.https.keypath);
+			const httpsServer = https.createServer({cert, key}).listen(hostArgs.port);
+			this.#host = new WebSocket.Server({server: httpsServer});
+		} 
+		else 
+		{
+			this.#host = new WebSocket.Server({port: hostArgs.port});
+		}
 		this.#host.on('connection', (client, request)=>this.onConnect(client, request));
 		this.#clients = {};
 		this.gameservers = {};
@@ -20,7 +32,7 @@ class MainServer {
 
 	getGameServer(name) {
 		if(!this.gameservers[name])
-			this.gameservers[name] = new GameServer();
+			this.gameservers[name] = new GameServer(name, this);
 
 		return this.gameservers[name];
 	}
@@ -37,6 +49,7 @@ class MainServer {
 
 	onMessage(client, req) {
 		let data = req.data;
+		if(typeof data === "string") return;
 		console.log(`Incoming: client: ${client}, data: ${data.toString("hex")}`);
 		let type = data.readUint8(0);
 		switch(type) {
