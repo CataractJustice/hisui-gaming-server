@@ -1,11 +1,6 @@
 {
 	"server": 
 	{
-		"port": 4040,
-		"https": 
-		{
-			"certpath": "/etc/letsencrypt/live/maidbooru.com/cert.pem",
-			"keypath": "/etc/letsencrypt/live/maidbooru.com/privkey.pem"
-		}
+		"port": 4040
 	}
 }
