@@ -58,9 +58,8 @@ class MapServer {
 		4 - save for map
 		5 - save for game
 		6 - save for server
-		[1-2]slot
-		[3]scope hint (ignored for routing; flags control relay)
-		[4...]slot data
+		[1]slot
+		[2...]slot data
 		*/
 		const flagsMap = {
 			broadcastForMap: 0,//1
@@ -71,7 +70,7 @@ class MapServer {
 			saveForGame: 5,//32
 			saveForServer: 6//64
 		}
-
+		
 		let flagsByte = data.readUint8(0);
 		let flags = {};
 
@@ -79,7 +78,7 @@ class MapServer {
 			flags[flag] = flagsByte & (1 << flagsMap[flag]);
 		}
 
-		return {flags: flags, slot: data.readUint16LE(1), data: data.slice(4)}
+		return {flags: flags, slot: data.readUint16LE(1), data: data.slice(3)}
 	}
 
 	connectClient(client) {
