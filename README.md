@@ -49,11 +49,10 @@ Broadcast/Store data
 
 |Type|Byte offset|Description|
 |---|---|---|
-|UInt8|0|Packet type (1)|
+|UInt8|0|Packet type|
 |UInt8|1|Flags mask|
 |UInt16|2|Data slot|
-|UInt8|4|Scope hint (map/game/server; see DataPacketScope)|
-|Blob|5|Any data that should be stored/broadcasted|
+|Blob|4|Any data that should be stored/broadcasted|
 
 Possible flags that client can use are
 |Flag description|Flag mask byte|
