@@ -1,5 +1,5 @@
 const MData = require("../multplayerdata/mdata");
-
+const config = require('../conf/conf');
 class MapServer {
 	clients;
 	gameserver;
@@ -18,25 +18,25 @@ class MapServer {
 
 		let packet = this.parsePacket(data);
 
-		if(packet.flags.broadcastForMap)
+		if(packet.flags.broadcastForMap && config.rules.mdata.allowedBroadcastScope.map)
 			this.broadcastMData(MData.make(client, packet.slot, packet.data, MData.scope.map));
 
-		if(packet.flags.broadcastForGame)
+		if(packet.flags.broadcastForGame && config.rules.mdata.allowedBroadcastScope.game)
 			this.gameserver.broadcastMData(MData.make(client, packet.slot, packet.data, MData.scope.game));
 
-		if(packet.flags.broadcastForServer)
+		if(packet.flags.broadcastForServer && config.rules.mdata.allowedBroadcastScope.server)
 			this.gameserver.mainserver.broadcastMData(MData.make(client, packet.slot, packet.data, MData.scope.server));
 
-		if(packet.flags.saveForPlayer) {
+		if(packet.flags.saveForPlayer && config.rules.mdata.allowedStoreScope.player) {
 			client.mdata.set(client, packet.slot, packet.data);
 		}
-		if(packet.flags.saveForMap) {
+		if(packet.flags.saveForMap && config.rules.mdata.allowedStoreScope.map) {
 			this.mdata.set(client, packet.slot, packet.data);
 		}
-		if(packet.flags.saveForGame) {
+		if(packet.flags.saveForGame && config.rules.mdata.allowedStoreScope.game) {
 			this.gameserver.mdata.set(client, packet.slot, packet.data);
 		}
-		if(packet.flags.saveForServer) {
+		if(packet.flags.saveForServer && config.rules.mdata.allowedStoreScope.server) {
 			this.gameserver.mainserver.mdata.set(client, packet.slot, packet.data);
 		} 
 	}

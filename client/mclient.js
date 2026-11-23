@@ -26,8 +26,9 @@ class MClient {
 		this.#connectionId = lastConnectionId++;
 		/*TO-DO: figure user id from request*/
 		this.#uid = 1;
-		/*TO-DO: get game name from the request*/
-		let gameServerName = "B2B";
+    	const url = new URL(request.url, "http://localhost");
+   		const gameServerName = url.searchParams.get("game");
+		console.log(`Client connected to game "${gameServerName}"`);
 		this.#game = server.getGameServer(gameServerName);
 		this.#game.connectClient(this);
 		this.mdata = new MData();

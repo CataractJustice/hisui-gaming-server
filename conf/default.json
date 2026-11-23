@@ -10,7 +10,20 @@
 		},
 		"mdata": {
 			"maxSlot": 65536,
-			"maxSlotDataSize": 1024 
+			"maxSlotDataSize": 1024,
+			"allowedStoreScope": 
+			{
+				"player": true,
+				"map": false,
+				"game": false,
+				"server": false
+			},
+			"allowedBroadcastScope": 
+			{
+				"map": true,
+				"game": true,
+				"server": false
+			}
 		}
 	},	
 	"echo": true
