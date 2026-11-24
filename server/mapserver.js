@@ -1,5 +1,6 @@
 const MData = require("../multplayerdata/mdata");
 const config = require('../conf/conf');
+const LogHelper = require("../loghelper");
 class MapServer {
 	clients;
 	gameserver;
@@ -17,6 +18,11 @@ class MapServer {
 	processPacket(client, data) {
 
 		let packet = this.parsePacket(data);
+		if(packet.data.length > config.rules.mdata.maxSlotDataSize) 
+		{
+			LogHelper.warn(`Client ${client.connectionId} sent data too large, allowed is ${config.rules.mdata.maxSlotDataSize} received is ${packet.data.length}`);
+			return;
+		}
 
 		if(packet.flags.broadcastForMap && config.rules.mdata.allowedBroadcastScope.map)
 			this.broadcastMData(MData.make(client, packet.slot, packet.data, MData.scope.map));

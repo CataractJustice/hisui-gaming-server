@@ -28,6 +28,7 @@ class MainServer {
 		this.#clients = {};
 		this.gameservers = {};
 		this.mdata = new MData();
+		LogHelper.log(`Running server at port ${hostArgs.port}`)
 	}
 
 	getGameServer(name) {
@@ -44,13 +45,11 @@ class MainServer {
 		mclient.sendMDataPackets(this.mdata.getFull());
 		client.onmessage = (req)=>this.onMessage(mclient, req);
 		client.on('close', ()=>this.onClose(mclient));
-		LogHelper.log(`New connection request`);
 	}
 
 	onMessage(client, req) {
 		let data = req.data;
 		if(typeof data === "string") return;
-		console.log(`Incoming: client: ${client}, data: ${data.toString("hex")}`);
 		let type = data.readUint8(0);
 		switch(type) {
 			case 0:

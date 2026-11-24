@@ -1,6 +1,8 @@
 const MData = require('../multplayerdata/mdata');
 const BufferBuilder = require('../bufferbuilder');
 const config = require('../conf/conf');
+const LogHelper = require('../loghelper')
+
 let lastConnectionId = 0;
 
 const PacketType = {
@@ -28,7 +30,7 @@ class MClient {
 		this.#uid = 1;
     	const url = new URL(request.url, "http://localhost");
    		const gameServerName = url.searchParams.get("game");
-		console.log(`Client connected to game "${gameServerName}"`);
+		LogHelper.log(`New client, game="${gameServerName}"`);
 		this.#game = server.getGameServer(gameServerName);
 		this.#game.connectClient(this);
 		this.mdata = new MData();
@@ -58,7 +60,7 @@ class MClient {
 		buffer.addUint8Array([PacketType.connect]);
 		buffer.addUint32Array([client.connectionId]);
 		this.ws.send(buffer.get());
-		console.log(`Outgoing connect: client ${this.uid}, data: ${buffer.get().toString("hex")}`)
+		LogHelper.log(`Outgoing connect: client ${this.connectionId}, data: ${buffer.get().toString("hex")}`)
 	}
 
 	sendInMapPacket(client) {
@@ -66,18 +68,17 @@ class MClient {
 		buffer.addUint8Array([PacketType.inmap]);
 		buffer.addUint32Array([client.connectionId]);
 		this.ws.send(buffer.get());
-		console.log(`Outgoing in map: client ${this.uid}, data: ${buffer.get().toString("hex")}`)
+		LogHelper.log(`Outgoing in map: client ${this.connectionId}, data: ${buffer.get().toString("hex")}`)
 	}
 
 	sendMDataPacket(mdataSlot) {
 		if((mdataSlot.owner.connectionId == this.#connectionId) && !config.echo) return;
 		let buffer = new BufferBuilder();
 		buffer.addUint8Array([PacketType.mdata, mdataSlot.scope]);
-		buffer.addUint32Array([mdataSlot.owner.connectionId]);
+		buffer.addUint32Array([mdataSlot.owner.connectionId, this.#map]);
 		buffer.addUint16Array([mdataSlot.slot]);
 		buffer.addBuffer(mdataSlot.blob);
 		this.ws.send(buffer.get());
-		console.log(`Outgoing mdata: client ${this.uid}, data: ${buffer.get().toString("hex")}`)
 	}
 	
 	echoId() 
@@ -104,7 +105,7 @@ class MClient {
 		buffer.addUint8Array([PacketType.disconnect]);
 		buffer.addUint32Array([client.connectionId]);
 		this.ws.send(buffer.get());
-		console.log(`Outgoing disconnect: client ${this.uid}, data: ${buffer.get().toString("hex")}`)
+		LogHelper.log(`Outgoing disconnect: client ${this.connectionId}, data: ${buffer.get().toString("hex")}`)
 	}
 }
 
