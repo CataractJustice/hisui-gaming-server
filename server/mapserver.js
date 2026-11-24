@@ -18,9 +18,13 @@ class MapServer {
 	processPacket(client, data) {
 
 		let packet = this.parsePacket(data);
+		if(data.slot > config.rules.mdata.maxSlot) 
+		{
+			LogHelper.warn(`Client ${client.connectionId} send data with slot id to lange, max allowed is ${config.rules.mdata.maxSlot} received is ${packet.slot}`);	
+		}
 		if(packet.data.length > config.rules.mdata.maxSlotDataSize) 
 		{
-			LogHelper.warn(`Client ${client.connectionId} sent data too large, allowed is ${config.rules.mdata.maxSlotDataSize} received is ${packet.data.length}`);
+			LogHelper.warn(`Client ${client.connectionId} sent data too large, max allowed is ${config.rules.mdata.maxSlotDataSize} received is ${packet.data.length}`);
 			return;
 		}
 

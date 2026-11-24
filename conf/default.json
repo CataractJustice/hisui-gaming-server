@@ -9,7 +9,7 @@
 			"maxPerIp": 12
 		},
 		"mdata": {
-			"maxSlot": 65536,
+			"maxSlot": 1024,
 			"maxSlotDataSize": 1024,
 			"allowedStoreScope": 
 			{
